@@ -1,9 +1,11 @@
-function item(context, width, height, spawn_start) {
+function item(context, width, height, spawn_start, lane) {
   var x = 0;
   var y = 0;
   var alpha = 0;
   var spawn_start = 0;
   var scale = 0;
+
+  var lane = lane;
 
   let matrix = new DOMMatrix();
   let needupdate = false;
@@ -72,6 +74,11 @@ function item(context, width, height, spawn_start) {
   function rotate(na) {
     alpha = na;
     needupdate = true;
+  }
+
+  function setXandY(newX, newY) {
+    x = newX;
+    y = newY;
   }
 
   function setScale(sc) {
@@ -145,6 +152,14 @@ function item(context, width, height, spawn_start) {
     }
   }
 
+  function getLane() {
+    return lane;
+  }
+
+  function setLane(newLane) {
+    lane = newLane;
+  }
+
   function collision(otherObj) {
     let collisionDetected = true;
     var myLeft = x;
@@ -189,9 +204,12 @@ function item(context, width, height, spawn_start) {
     getAlpha,
     setWidth,
     setHeight,
+    getLane,
+    setLane,
     get_spawnStart,
     set_spawnStart,
     shoot,
+    setXandY,
   };
 }
 
@@ -206,8 +224,8 @@ function rect_path(width, height) {
   return rectpath;
 }
 
-export function rect(context, width, height, fillStyle) {
-  let o = item(context, width, height);
+export function rect(context, width, height, fillStyle, lane) {
+  let o = item(context, width, height, 0, lane);
   o.obj_infos.path = rect_path(width, height);
   let pre = o.draw;
 

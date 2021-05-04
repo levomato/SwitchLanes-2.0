@@ -21,10 +21,17 @@ function Init() {
   var game_over = false;
   var game_started = false;
 
-  var player = rect(context, canvas.width / 5, canvas.width / 5, "blue");
+  var player = rect(
+    context,
+    Math.round(canvas.width / 5),
+    Math.round(canvas.width / 5),
+    "blue",
+    2
+  );
   player.setScale(canvas.width / 10);
-  player.move(canvas.width / 2, canvas.height * 0.8);
-
+  player.move(canvas.width / 2, Math.round(canvas.height * 0.8));
+  console.log(player.getLane());
+  //console.log(player.getHeight());
   let line = lines(context, "red");
 
   var active_obstacles = [];
@@ -61,20 +68,22 @@ function Init() {
   });
 
   function generateObstacle() {
+    var randomNumber = Math.floor(Math.random() * 5, 0);
+    var randomLane = (canvas.width / 5) * randomNumber;
+
     if (frameNo == 1 || everyinterval(150, frameNo)) {
+      console.log(player.getY() - player.getHeight());
       var newObstacle = rect(
         context,
-        canvas.width / 5,
-        canvas.width / 5,
-        "#" + (((1 << 24) * Math.random()) | 0).toString(16)
+        Math.round(canvas.width / 5),
+        Math.round(canvas.width / 5),
+        "#" + (((1 << 24) * Math.random()) | 0).toString(16),
+        randomNumber
       );
-      console.log(newObstacle.getWidth());
       newObstacle.setScale(canvas.width / 10);
-      newObstacle.move(
-        newObstacle.getWidth() / 2 +
-          (canvas.width / 5) * Math.floor(Math.random() * 5, 0)
-      );
+      newObstacle.move(newObstacle.getWidth() / 2 + randomLane);
       active_obstacles.push(newObstacle);
+      console.log(newObstacle.getLane());
     }
   }
 
@@ -83,14 +92,21 @@ function Init() {
       context.clearRect(0, 0, canvas.width, canvas.height);
       generateObstacle();
       line.draw();
+      //   player.move(player.getX(), player.getY());
       player.draw();
 
       for (let i = 0; i < active_obstacles.length; i++) {
         active_obstacles[i].draw();
-
         let position_cval = active_obstacles[i].get_spawnStart();
         active_obstacles[i].set_spawnStart(position_cval + obstacle_speed);
         active_obstacles[i].move(active_obstacles[i].getX(), position_cval + 2);
+
+        if (
+          active_obstacles[i].getY() <= player.getY() - player.getHeight() &&
+          active_obstacles[i].getLane() == player.getLane()
+        ) {
+          console.log("Collision");
+        }
       }
 
       frameNo += 1;

@@ -63,9 +63,13 @@ export function swipedetect(canvas, callback) {
 export function movePlayer(canvas, swipedir, player) {
   if (swipedir == "right") {
     player.move(player.getX() + canvas.width / 5, player.getY());
+    player.setLane(player.getLane() + 1);
+    console.log(player.getLane());
   }
   if (swipedir == "left") {
     player.move(player.getX() - canvas.width / 5, player.getY());
+    player.setLane(player.getLane() - 1);
+    console.log(player.getLane());
   }
   if (swipedir == "up") {
     player.rotate(player.getAlpha() + 90);
