@@ -7,6 +7,7 @@ import {
 } from "./canvas_lib.js";
 
 import { drawStartScreen } from "./startScreen.js";
+import { drawEndScreen } from "./endScreen.js";
 
 import { swipedetect, movePlayer } from "./swipeFunctions.js";
 
@@ -60,6 +61,21 @@ function Init() {
     });
   }
 
+  function endGame() {
+    console.log("game over")
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    game_started = false;
+    //game_over = true;
+    drawEndScreen(context, canvas);
+    canvas.addEventListener("touchstart", (evt) => {
+      game_over = false
+      location.reload();
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      game_started = true;
+      Init();
+    });
+  }
+
   swipedetect(canvas, function (swipedir) {
     var hidetimer = null;
     if (swipedir != "none");
@@ -94,26 +110,38 @@ function Init() {
       line.draw();
       //   player.move(player.getX(), player.getY());
       player.draw();
-
+      
       for (let i = 0; i < active_obstacles.length; i++) {
         active_obstacles[i].draw();
         let position_cval = active_obstacles[i].get_spawnStart();
         active_obstacles[i].set_spawnStart(position_cval + obstacle_speed);
         active_obstacles[i].move(active_obstacles[i].getX(), position_cval + 2);
-
+        
         if (
           active_obstacles[i].getY() >= player.getY() - player.getHeight() && active_obstacles[i].getLane() == player.getLane()
-        ) {
-          console.log("Collision");
+          ) {
+            
+            console.log("Collision");
+            game_over = true;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            return
+            game_started = false
+            endGame();
+            
+          }
+          
+          
         }
       }
 
       frameNo += 1;
-    }
   }
-
   function animate() {
+    
     draw();
+    if (game_over){
+      endGame();
+    }
     window.requestAnimationFrame(animate);
   }
 
