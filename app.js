@@ -87,6 +87,10 @@ function Init() {
 
       for (let i = 0; i < active_obstacles.length; i++) {
         active_obstacles[i].draw();
+
+        let position_cval = active_obstacles[i].get_spawnStart();
+        active_obstacles[i].set_spawnStart(position_cval + obstacle_speed);
+        active_obstacles[i].move(active_obstacles[i].getX(), position_cval + 2);
       }
 
       frameNo += 1;
