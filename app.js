@@ -10,6 +10,8 @@ import { drawStartScreen } from "./startScreen.js";
 
 import { swipedetect, movePlayer } from "./swipeFunctions.js";
 
+import { everyinterval } from "./intervalHelper.js";
+
 function Init() {
   let context = getCanvas("canvas01");
   let canvas = context.canvas;
@@ -19,7 +21,7 @@ function Init() {
   var game_over = false;
   var game_started = false;
 
-  var player = rect(context, 100, 100, "blue");
+  var player = rect(context, canvas.width / 5, canvas.width / 5, "blue");
   player.setScale(canvas.width / 10);
   player.move(canvas.width / 2, canvas.height * 0.8);
 
@@ -58,11 +60,36 @@ function Init() {
     movePlayer(canvas, swipedir, player);
   });
 
+  function generateObstacle() {
+    if (frameNo == 1 || everyinterval(150, frameNo)) {
+      var newObstacle = rect(
+        context,
+        canvas.width / 5,
+        canvas.width / 5,
+        "#" + (((1 << 24) * Math.random()) | 0).toString(16)
+      );
+      console.log(newObstacle.getWidth());
+      newObstacle.setScale(canvas.width / 10);
+      newObstacle.move(
+        newObstacle.getWidth() / 2 +
+          (canvas.width / 5) * Math.floor(Math.random() * 5, 0)
+      );
+      active_obstacles.push(newObstacle);
+    }
+  }
+
   function draw() {
     if (game_started) {
       context.clearRect(0, 0, canvas.width, canvas.height);
+      generateObstacle();
       line.draw();
       player.draw();
+
+      for (let i = 0; i < active_obstacles.length; i++) {
+        active_obstacles[i].draw();
+      }
+
+      frameNo += 1;
     }
   }
 
