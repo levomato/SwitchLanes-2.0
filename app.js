@@ -102,8 +102,7 @@ function Init() {
         active_obstacles[i].move(active_obstacles[i].getX(), position_cval + 2);
 
         if (
-          active_obstacles[i].getY() <= player.getY() - player.getHeight() &&
-          active_obstacles[i].getLane() == player.getLane()
+          active_obstacles[i].getY() >= player.getY() - player.getHeight() && active_obstacles[i].getLane() == player.getLane()
         ) {
           console.log("Collision");
         }
