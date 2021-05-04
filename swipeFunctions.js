@@ -62,14 +62,20 @@ export function swipedetect(canvas, callback) {
 
 export function movePlayer(canvas, swipedir, player) {
   if (swipedir == "right") {
-    player.move(player.getX() + canvas.width / 5, player.getY());
+    player.move(
+      Math.round(player.getX() + canvas.width / 5),
+      Math.round(player.getY())
+    );
     player.setLane(player.getLane() + 1);
-    console.log(player.getLane());
+    console.log(player.getX());
   }
   if (swipedir == "left") {
-    player.move(player.getX() - canvas.width / 5, player.getY());
+    player.move(
+      Math.round(player.getX() - canvas.width / 5),
+      Math.round(player.getY())
+    );
     player.setLane(player.getLane() - 1);
-    console.log(player.getLane());
+    console.log(player.getX());
   }
   if (swipedir == "up") {
     player.rotate(player.getAlpha() + 90);

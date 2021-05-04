@@ -290,8 +290,8 @@ export function drawpercentage(context, percentage) {
   return o;
 }
 
-export function circle(context, radius, fillStyle, text = "Circle") {
-  let o = item(context, radius * 2, radius * 2);
+export function circle(context, radius, fillStyle, text = "Circle", lane) {
+  let o = item(context, radius * 2, radius * 2, 0, lane);
 
   let pre = o.draw;
   o.draw = function (parent) {

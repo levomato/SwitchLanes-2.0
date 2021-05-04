@@ -31,6 +31,17 @@ function Init() {
   player.setScale(canvas.width / 10);
   player.move(canvas.width / 2, Math.round(canvas.height * 0.8));
   console.log(player.getLane());
+
+  function createMissel() {
+    console.log("create missel");
+    var missel = circle(context, 20, "red", "", player.getLane());
+    console.log(missel.getLane());
+    missel.setScale(1);
+    missel.move(player.getX(), player.getY());
+    active_missels.push(missel);
+  }
+
+  //missel.draw();
   //console.log(player.getHeight());
   let line = lines(context, "red");
 
@@ -54,6 +65,7 @@ function Init() {
 
   function startGame() {
     drawStartScreen(context, canvas);
+
     canvas.addEventListener("touchstart", (evt) => {
       context.clearRect(0, 0, canvas.width, canvas.height);
       game_started = true;
@@ -62,9 +74,12 @@ function Init() {
 
   swipedetect(canvas, function (swipedir) {
     var hidetimer = null;
-    if (swipedir != "none");
-    clearTimeout(hidetimer);
-    movePlayer(canvas, swipedir, player);
+    if (swipedir != "none") {
+      clearTimeout(hidetimer);
+      movePlayer(canvas, swipedir, player);
+    } else {
+      createMissel();
+    }
   });
 
   function generateObstacle() {
@@ -91,6 +106,23 @@ function Init() {
     if (game_started) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       generateObstacle();
+
+      for (let i = 0; i < active_missels.length; i++) {
+        active_missels[i].draw();
+        active_missels[i].shoot("horizontal");
+
+        for (let y = 0; y < active_obstacles.length; y++) {
+          if (
+            active_obstacles[y].getY() + active_obstacles[y].getHeight() / 2 >
+              active_missels[i].getY() &&
+            active_obstacles[y].getLane() == active_missels[i].getLane()
+          ) {
+            active_obstacles.splice(y, 1);
+            active_missels.splice(i, 1);
+          }
+        }
+      }
+
       line.draw();
       //   player.move(player.getX(), player.getY());
       player.draw();
@@ -102,10 +134,10 @@ function Init() {
         active_obstacles[i].move(active_obstacles[i].getX(), position_cval + 2);
 
         if (
-          active_obstacles[i].getY() <= player.getY() - player.getHeight() &&
+          active_obstacles[i].getY() >= player.getY() - player.getHeight() &&
           active_obstacles[i].getLane() == player.getLane()
         ) {
-          console.log("Collision");
+          //console.log("Collision");
         }
       }
 
