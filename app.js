@@ -11,7 +11,7 @@ import { drawStartScreen } from "./startScreen.js";
 import { swipedetect, movePlayer } from "./swipeFunctions.js";
 
 import { everyinterval } from "./intervalHelper.js";
-// import { twoFingersDetector } from "./twoFingersDetector.js";
+import { drawEndScreen } from "./endScreen.js";
 
 function Init() {
   let context = getCanvas("canvas01");
@@ -115,6 +115,14 @@ function Init() {
     }
   }
 
+  function endGame() {
+    drawEndScreen(context, canvas);
+
+    canvas.addEventListener("touchstart", (evt) => {
+      location.reload();
+    });
+  }
+
   function createMissel() {
     console.log("create missel");
     var missel = circle(context, 20, "red", "", player.getLane());
@@ -125,7 +133,7 @@ function Init() {
   }
 
   function draw() {
-    if (game_started) {
+    if (game_started && !game_over) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       generateObstacle();
       decrementLife();
@@ -150,11 +158,13 @@ function Init() {
       //   player.move(player.getX(), player.getY());
       player.draw();
 
+      context.fillStyle = "yellow";
       context.fillText("Score: " + destroyed_Obstacles.length, 50, 50);
 
       context.fillText("Leben: " + lifes, canvas.width - 200, 50);
 
       context.fillText("Bomben: " + bombs, canvas.width / 2, 50);
+      context.fillStyle = "blue";
 
       for (let i = 0; i < active_obstacles.length; i++) {
         active_obstacles[i].draw();
@@ -166,7 +176,7 @@ function Init() {
           active_obstacles[i].getY() >= player.getY() - player.getHeight() &&
           active_obstacles[i].getLane() == player.getLane()
         ) {
-          //console.log("Collision");
+          game_over = true;
         }
       }
 
@@ -193,6 +203,9 @@ function Init() {
       }
 
       frameNo += 1;
+    } else if (game_over) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      endGame();
     }
   }
 
