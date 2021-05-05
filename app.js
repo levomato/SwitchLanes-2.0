@@ -47,6 +47,8 @@ function Init() {
   var active_missels = [];
   var bombs = 1;
 
+  var newBombAdded;
+
   var bomb_loading_progress = 0;
 
   let twoFingersOnScreen = false;
@@ -103,6 +105,16 @@ function Init() {
     }
   }
 
+  function newBomb() {
+    if (
+      destroyed_Obstacles.length % 10 == 0 &&
+      destroyed_Obstacles.length > 0
+    ) {
+      bombs++;
+      newBombAdded = true;
+    }
+  }
+
   function createMissel() {
     console.log("create missel");
     var missel = circle(context, 20, "red", "", player.getLane());
@@ -127,6 +139,7 @@ function Init() {
               active_missels[i].getY() &&
             active_obstacles[y].getLane() == active_missels[i].getLane()
           ) {
+            destroyed_Obstacles.push(active_obstacles[i]);
             active_obstacles.splice(y, 1);
             active_missels.splice(i, 1);
           }
@@ -158,7 +171,6 @@ function Init() {
       }
 
       if (twoFingersOnScreen && bomb_loading_progress < 101 && bombs > 0) {
-        console.log("Drinne");
         let loadingBar = drawpercentage(context, bomb_loading_progress);
         loadingBar.move(canvas.width / 2, canvas.height / 2);
         loadingBar.setScale(1);
@@ -168,10 +180,16 @@ function Init() {
         twoFingersOnScreen = false;
         bomb_loading_progress = 0;
       }
-
       if (bomb_loading_progress == 100) {
         active_obstacles = [];
         bombs--;
+      }
+
+      if (!newBombAdded) {
+        newBomb();
+      }
+      if (destroyed_Obstacles.length % 10 != 0) {
+        newBombAdded = false;
       }
 
       frameNo += 1;
