@@ -94,6 +94,15 @@ function Init() {
     }
   }
 
+  function decrementLife() {
+    for (let i = 0; i < active_obstacles.length; i++) {
+      if (active_obstacles[i].getY() > canvas.height) {
+        active_obstacles.splice(i, 1);
+        lifes--;
+      }
+    }
+  }
+
   function createMissel() {
     console.log("create missel");
     var missel = circle(context, 20, "red", "", player.getLane());
@@ -107,7 +116,7 @@ function Init() {
     if (game_started) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       generateObstacle();
-
+      decrementLife();
       for (let i = 0; i < active_missels.length; i++) {
         active_missels[i].draw();
         active_missels[i].shoot("horizontal");
@@ -127,6 +136,12 @@ function Init() {
       line.draw();
       //   player.move(player.getX(), player.getY());
       player.draw();
+
+      context.fillText("Score: " + destroyed_Obstacles.length, 50, 50);
+
+      context.fillText("Leben: " + lifes, canvas.width - 200, 50);
+
+      context.fillText("Bomben: " + bombs, canvas.width / 2, 50);
 
       for (let i = 0; i < active_obstacles.length; i++) {
         active_obstacles[i].draw();
