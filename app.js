@@ -11,6 +11,7 @@ import { drawStartScreen } from "./startScreen.js";
 import { swipedetect, movePlayer } from "./swipeFunctions.js";
 
 import { everyinterval } from "./intervalHelper.js";
+// import { twoFingersDetector } from "./twoFingersDetector.js";
 
 function Init() {
   let context = getCanvas("canvas01");
@@ -32,15 +33,6 @@ function Init() {
   player.move(canvas.width / 2, Math.round(canvas.height * 0.8));
   console.log(player.getLane());
 
-  function createMissel() {
-    console.log("create missel");
-    var missel = circle(context, 20, "red", "", player.getLane());
-    console.log(missel.getLane());
-    missel.setScale(1);
-    missel.move(player.getX(), player.getY());
-    active_missels.push(missel);
-  }
-
   //missel.draw();
   //console.log(player.getHeight());
   let line = lines(context, "red");
@@ -53,7 +45,7 @@ function Init() {
 
   var lifes = 5;
   var active_missels = [];
-  var bombs = 0;
+  var bombs = 1;
 
   var bomb_loading_progress = 0;
 
@@ -102,6 +94,15 @@ function Init() {
     }
   }
 
+  function createMissel() {
+    console.log("create missel");
+    var missel = circle(context, 20, "red", "", player.getLane());
+    console.log(missel.getLane());
+    missel.setScale(1);
+    missel.move(player.getX(), player.getY());
+    active_missels.push(missel);
+  }
+
   function draw() {
     if (game_started) {
       context.clearRect(0, 0, canvas.width, canvas.height);
@@ -141,6 +142,23 @@ function Init() {
         }
       }
 
+      if (twoFingersOnScreen && bomb_loading_progress < 101 && bombs > 0) {
+        console.log("Drinne");
+        let loadingBar = drawpercentage(context, bomb_loading_progress);
+        loadingBar.move(canvas.width / 2, canvas.height / 2);
+        loadingBar.setScale(1);
+        loadingBar.draw();
+        bomb_loading_progress += 2;
+      } else {
+        twoFingersOnScreen = false;
+        bomb_loading_progress = 0;
+      }
+
+      if (bomb_loading_progress == 100) {
+        active_obstacles = [];
+        bombs--;
+      }
+
       frameNo += 1;
     }
   }
@@ -151,6 +169,13 @@ function Init() {
   }
 
   animate();
+
+  canvas.addEventListener("touchstart", (evt) => {
+    evt.preventDefault();
+    if (evt.touches.length == 2) {
+      twoFingersOnScreen = true;
+    }
+  });
 }
 
 window.onload = Init();
